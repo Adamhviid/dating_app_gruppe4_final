@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title>KEA Dating - Main!</title>
+    <title>KEA Dating</title>
     <meta charset="UTF-8">
 </head>
 
@@ -12,11 +12,10 @@
 <div th:insert="fragments/jumbotron :: jumbotron"></div>
 
 <div class="container" id="main">
-
-    <!-- Indsæt indhold her -->
     <div class="row">
-        <!-- søg profiler efter køn knap -->
         <div class="col-md-6">
+
+            <!-- søg efter køn -->
             <div id="form-container">
                 <h2>Søg profiler efter køn</h2>
                 <form action="/main" method="get" enctype="multipart/form-data">
@@ -28,12 +27,13 @@
                 </form>
             </div>
 
-            <!-- se kandidatliste -->
+            <!-- se favoritliste -->
             <div>
                 <form action="/maincandidate" method="post">
                     <button class="btn btn-primary" type="submit" name="candidate">Se dine favoritter</button>
                 </form>
             </div>
+
         </div>
     </div>
 
@@ -52,9 +52,7 @@
             </div>
             <br><br>
         </div>
-    </main>
 
-    <main>
         <div class="admin" th:each="allCandidates : ${candidateList}">
             <div class="card">
                 <img th:src="'data:image/jpeg;base64,' + ${allCandidates.getImgBase64()}" style="width:100%"/><br>

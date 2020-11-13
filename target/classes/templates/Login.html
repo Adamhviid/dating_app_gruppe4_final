@@ -13,13 +13,11 @@
 
 <div class="container">
 
-    <!-- Indsæt indhold her -->
     <h1>LOGIN</h1>
     <h2>Indtast din Email og kodeord</h2>
 
     <div class="row">
         <div class="col-md-8">
-
             <form action="/correctlogin"  method="post" enctype="multipart/form-data">
                 <div class="form-group">
                     <input type="text" id="pEmail" name="pEmail" placeholder="Email..."><br>
@@ -31,13 +29,16 @@
             </form>
         </div>
     </div>
+
     <br><br>
+
     <hr>
+
     <form id="toMainPage" action="/" method="get">
         <button class="btn btn-primary" type="submit"><-- Tilbage</button>
     </form>
 
-</div> <!-- /container -->
+</div>
 <div th:insert="fragments/footer :: footer"></div>
 </body>
 </html>

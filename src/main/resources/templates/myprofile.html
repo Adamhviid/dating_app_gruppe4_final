@@ -12,9 +12,10 @@
 <div th:insert="fragments/jumbotron :: jumbotron"></div>
 
 <div class="container" id="main">
-
     <div class="row">
         <div class="col-lg-6">
+
+            <!-- vis currentlogin's data -->
             <div class="col" id="profileID">
                 <form action="/tomain" method="post">
                     <button class="btn btn-primary" type="submit" name="candidate">Tilbage til hovedmenu</button>
@@ -32,6 +33,7 @@
                 </div>
             </div>
 
+            <!-- ændre currentlogins data -->
             <div class="col" id="edit-container">
                 <h2>Ret profil</h2>
                 <form id="editProfile" action="/editprofile" method="post" enctype="multipart/form-data" >
@@ -47,8 +49,10 @@
                     <button class="btn btn-primary" type="submit">Gem profil</button>
                 </form>
             </div>
+
         </div>
 
+        <!-- se bedskeder -->
         <div class="col-lg-6">
             <form action="/myprofile/messages" method="post">
                 <button class="btn btn-primary" type="submit" name="beskeder">Se mine beskeder</button>
@@ -57,6 +61,7 @@
                 <p th:text="${allMessages.toString()}"></p>
             </div>
         </div>
+
     </div>
 </div>
 

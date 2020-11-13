@@ -5,20 +5,16 @@
     <div th:insert="fragments/header :: header"></div>
     <div th:insert="fragments/menu :: menu"></div>
 
-    <title>KEA Dating - Om os</title>
+    <title>Om os</title>
     <meta charset="UTF-8">
 </head>
 
 <body>
 
-<div th:insert="fragments/jumbotron :: jumbotron">
-</div>
+<div th:insert="fragments/jumbotron :: jumbotron"></div>
 
 <div class="container" id="main">
-
-    <!-- Indsæt indhold her -->
     <div class="row">
-
         <div class="col-md-6">
 
             <div class="simple-text"><h2>Om os</h2>
@@ -40,27 +36,29 @@
                     Jesper, Adam, Anton, Peter og Jean
                 </p>
             </div>
+
             <br><br>
+
             <div id="form-container">
                 <form id="toMainPage" action="/" method="get">
                     <button class="btn btn-primary" type="submit"><-- Tilbage</button>
                 </form>
-
             </div>
+
         </div>
 
         <br><br>
 
         <div class="col-md-6">
             <div class="simple-text"><h2>&ensp;</h2>
-                <p class="parag2"><img src="images/members_photos/Member_02.jpg" width="102%" height="auto" alt="Zentai costume image">
-                    <br><br></p>
+                <p class="parag2"><img src="images/members_photos/Member_02.jpg" width="102%" height="auto" alt="Zentai costume image"></p>
             </div>
         </div>
+
     </div>
-</div> <!-- /container -->
+</div>
 <br>
-<hr>
+
 </body>
 <div th:insert="fragments/footer :: footer"></div>
 </html>

@@ -11,12 +11,9 @@
 
 <body>
 
-<div th:insert="fragments/jumbotron :: jumbotron">
-</div>
+<div th:insert="fragments/jumbotron :: jumbotron"></div>
 
 <div class="container" id="main">
-
-    <!-- Indsæt indhold her -->
     <div class="row">
 
         <div class="col-md-6">
@@ -36,7 +33,9 @@
                 <br><br>
                 ♥︎ KEA Dating Teamet ♥︎
             </p>
+
             <br><br>
+
             <div id="form-container">
                 <form id="toMainPage" action="/" method="get">
                     <button class="btn btn-primary" type="submit"><-- Tilbage</button>
@@ -49,13 +48,13 @@
 
         <div class="col-md-6">
             <div class="simple-text"><h2>&ensp;</h2></div>
-            <p class="parag2"><img src="images/members_photos/Member_07.jpg" width="78%" height="auto" alt="Zentai costume image">
-                <br><br></p>
+            <p class="parag2"><img src="images/members_photos/Member_07.jpg" width="78%" height="auto" alt="Zentai costume image"></p>
         </div>
+
     </div>
-</div> <!-- /container -->
+</div>
 <br>
-<hr>
+
 </body>
 <div th:insert="fragments/footer :: footer"></div>
 </html>

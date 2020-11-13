@@ -12,22 +12,22 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 import javax.sql.rowset.serial.SerialBlob;
 
-import java.awt.*;
 import java.io.IOException;
 
 @Repository
 public class ProfileRepository {
 
-    //liste med alle profiler
+    //liste med alle liste af profiler
     List<Profile> allProfiles = new ArrayList<>();
     List<Profile> allCandidates = new ArrayList<>();
-    //List<Profile> searchLogin = new ArrayList<Profile>();
+
 
     //Denne metode laver forbindelsen til mysql databasen
     public Connection establishConnection() throws SQLException {
         return DriverManager.getConnection("jdbc:mysql://localhost:3306/dating_app_schema?serverTimezone=UTC", "root", "1");
         //standard: user=root, password=1
     }
+
     //Metode i stedet for dupliceret kode
     //Foretager en ps.execute og læser resulSet ind i allProfiles array
     public List<Profile> returnProfile(PreparedStatement ps) throws SQLException {
@@ -51,15 +51,16 @@ public class ProfileRepository {
         return allProfiles;
     }
 
+    //display alle profiler i databasen
     public List<Profile> listAllProfiles() throws SQLException{
         allProfiles.clear();
         allCandidates.clear();
-        //lavet et statement og eksekvere en query
         PreparedStatement ps = establishConnection().prepareStatement(" SELECT * FROM profiles;");
 
         return returnProfile(ps);
     }
 
+    //lav profil og indsæt data til databasen
     public void createProfile(String pName, String pKodeord, String pGender, String pEmail, String pDescription, int pAdmin, MultipartFile file) throws SQLException, IOException {
         allProfiles.clear();
         allCandidates.clear();
@@ -77,22 +78,68 @@ public class ProfileRepository {
 
         ps.executeUpdate();
     }
-    //metode til at teste om et username allerede findes i databasen
-    public boolean testUsernameViability(String email) throws SQLException{
-        boolean usernameIsViable;
-        PreparedStatement ps = establishConnection().prepareStatement("SELECT * FROM profiles where email = ?");
-        ps.setString(1,email);
-        ResultSet rs = ps.executeQuery();
-        usernameIsViable = rs.next();
-        return usernameIsViable;
+
+    //checke om login-et
+    public List<Profile> searchLogin(String email, String kodeord) throws SQLException {
+        allProfiles.clear();
+        allCandidates.clear();
+        PreparedStatement ps = establishConnection().prepareStatement("SELECT * FROM profiles where email = ? AND kodeord = ?");
+        ps.setString(1, email);
+        ps.setString(2, kodeord);
+
+        return returnProfile(ps);
     }
 
-    public void deleteProfile(int id) throws SQLException {
-        PreparedStatement ps = establishConnection().prepareStatement("DELETE FROM profiles WHERE id=?");
-        ps.setInt(1,id);
+    public List<Profile> searchProfile(String gender) throws SQLException {
+        allProfiles.clear();
+        allCandidates.clear();
+        PreparedStatement ps = establishConnection().prepareStatement("SELECT * FROM profiles where gender like ?");
+        ps.setString(1,gender);
+
+        return returnProfile(ps);
+    }
+
+    // Finder bruger med x id
+    public List<Profile> profile(int id) throws SQLException {
+        allProfiles.clear();
+        allCandidates.clear();
+        PreparedStatement ps = establishConnection().prepareStatement("SELECT * FROM profiles where id = ?");
+        ps.setInt(1, id);
+
+        return returnProfile(ps);
+    }
+
+    //tilføj profilen til currentlogin favoritliste
+    public void addCandidate(String candidateId, int currentId) throws SQLException {
+        PreparedStatement ps = establishConnection().prepareStatement("UPDATE profiles SET candidatelist=concat(candidatelist, ?) where id = ?");
+        ps.setString(1,candidateId + ",");
+        ps.setInt(2,currentId);
         ps.executeUpdate();
     }
 
+    //display currentlogin favoritliste
+    public List<Profile> candidateList(int currentId) throws SQLException {
+        allProfiles.clear();
+        allCandidates.clear();
+        String candidateList = "";
+        PreparedStatement ps = establishConnection().prepareStatement("SELECT candidatelist FROM profiles WHERE id = ?");
+        ps.setInt(1,currentId);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            candidateList = rs.getString(1);
+        }
+        String[] candidateAraray = candidateList.split(",");
+
+        for ( int i = 0; i <= candidateAraray.length-1; i++) {
+            PreparedStatement pss = establishConnection().prepareStatement("SELECT * FROM profiles WHERE id = ?");
+            pss.setString(1, candidateAraray[i]);
+            allCandidates = returnProfile(pss);
+        }
+        System.out.println(allCandidates.toString());
+        return allCandidates;
+    }
+
+    //inde på profilen som er loggede ind, kan ændre sine oplysninger
     public List<Profile> editProfile(int id, String name, String gender, String email, String kodeord, String description) throws SQLException {
         PreparedStatement ps = establishConnection().prepareStatement("UPDATE profiles SET name = ?, gender = ?, email = ?, description = ?, kodeord = ? where id= ?");
         ps.setString(1,name);
@@ -108,61 +155,22 @@ public class ProfileRepository {
         return returnProfile(pss);
     }
 
-    public List<Profile> searchProfile(String gender) throws SQLException {
-        allProfiles.clear();
-        allCandidates.clear();
-        PreparedStatement ps = establishConnection().prepareStatement("SELECT * FROM profiles where gender like ?");
-        ps.setString(1,gender);
-
-        return returnProfile(ps);
-    }
-
-    public List<Profile> candidateList(int currentId) throws SQLException {
-        allProfiles.clear();
-        allCandidates.clear();
-        String candidateList = "";
-        PreparedStatement ps = establishConnection().prepareStatement("SELECT candidatelist FROM profiles WHERE id = ?");
-        ps.setInt(1,currentId);
-        ResultSet rs = ps.executeQuery();
-        while (rs.next()) {
-            candidateList = rs.getString(1);
-        }
-        String[] candidateAraray = candidateList.split(",");
-
-        //ResultSet rss = null;
-        for ( int i = 0; i <= candidateAraray.length-1; i++) {
-            PreparedStatement pss = establishConnection().prepareStatement("SELECT * FROM profiles WHERE id = ?");
-            pss.setString(1, candidateAraray[i]);
-            allCandidates = returnProfile(pss);
-        }
-        System.out.println(allCandidates.toString());
-        return allCandidates;
-    }
-
-    public List<Profile> searchLogin(String email, String kodeord) throws SQLException {
-        allProfiles.clear();
-        allCandidates.clear();
-        PreparedStatement ps = establishConnection().prepareStatement("SELECT * FROM profiles where email = ? AND kodeord = ?");
-        ps.setString(1, email);
-        ps.setString(2, kodeord);
-
-        return returnProfile(ps);
-    }
-
-    // Finder bruger med x id
-    public List<Profile> profile(int id) throws SQLException {
-        allProfiles.clear();
-        allCandidates.clear();
-        PreparedStatement ps = establishConnection().prepareStatement("SELECT * FROM profiles where id = ?");
-        ps.setInt(1, id);
-
-        return returnProfile(ps);
-    }
-
-    public void addCandidate(String candidateId, int currentId) throws SQLException {
-        PreparedStatement ps = establishConnection().prepareStatement("UPDATE profiles SET candidatelist=concat(candidatelist, ?) where id = ?");
-        ps.setString(1,candidateId + ",");
-        ps.setInt(2,currentId);
+    //for admins, så de kan slette profiler
+    public void deleteProfile(int id) throws SQLException {
+        PreparedStatement ps = establishConnection().prepareStatement("DELETE FROM profiles WHERE id=?");
+        ps.setInt(1,id);
         ps.executeUpdate();
     }
+
+
+
+
+
+
+
+
+
+
+
+
 }

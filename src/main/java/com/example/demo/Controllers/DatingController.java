@@ -44,12 +44,17 @@ public class DatingController {
         String description = createProfileData.getParameter("pDescription");
         String kodeord = createProfileData.getParameter("pKodeord");
         rp.createProfile(name, kodeord, gender, email, description, admin,file);
-/*
 
- */
         return "login";
     }
 
+    //Login side
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
+
+    //checking if login is correct
     @PostMapping("/correctlogin")
     public String login(WebRequest loginData)  throws SQLException{
         String email = loginData.getParameter("pEmail");
@@ -89,6 +94,34 @@ public class DatingController {
         return "redirect:/adminPage";
     }
 
+    // Search Profiles
+    @GetMapping("/main")
+    public String searchProfiles(Model searchModel, WebRequest searchProfile){
+        String gender = searchProfile.getParameter("pGender");
+        try {
+            allProfiles = rp.searchProfile(gender);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        searchModel.addAttribute("profileList",allProfiles);
+        return "main";
+    }
+
+    //myprofile
+    @GetMapping("/myprofile")
+    public String myprofile(Model myprofileModel) throws SQLException {
+        allProfiles.clear();
+        allProfiles.add(currentLogin);
+        myprofileModel.addAttribute("profileID",allProfiles);
+        return "myprofile";
+    }
+
+    //til main side fra profil
+    @PostMapping("/tomain")
+    public String toMain() {
+        return "main";
+    }
+
     // Edit Profile
     @PostMapping("/editprofile")
     public String editProfile(WebRequest editProfile) throws IOException {
@@ -110,35 +143,6 @@ public class DatingController {
         return "redirect:/myprofile";
     }
 
-    // Search Profiles
-    @GetMapping("/main")
-    public String searchProfiles(Model searchModel, WebRequest searchProfile){
-        String gender = searchProfile.getParameter("pGender");
-        try {
-            allProfiles = rp.searchProfile(gender);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        searchModel.addAttribute("profileList",allProfiles);
-        return "main";
-    }
-
-    @PostMapping("/maincandidate")
-    public String searchCandidates(Model candidateModel) throws SQLException {
-        allCandidates = rp.candidateList(currentLogin.getId());
-        candidateModel.addAttribute("candidateList",allCandidates);
-        return "main";
-    }
-
-    //myprofile
-    @GetMapping("/myprofile")
-    public String myprofile(Model myprofileModel) throws SQLException {
-        allProfiles.clear();
-        allProfiles.add(currentLogin);
-        myprofileModel.addAttribute("profileID",allProfiles);
-        return "myprofile";
-    }
-
     //see messages
     @PostMapping("/myprofile/messages")
     public String seeMessages(Model m, Model myprofileModel) throws SQLException {
@@ -148,23 +152,22 @@ public class DatingController {
         return "myprofile";
     }
 
-    @PostMapping("/tomain")
-    public String toMain() {
+    //display liste af profiles favoritter
+    @PostMapping("/maincandidate")
+    public String searchCandidates(Model candidateModel) throws SQLException {
+        allCandidates = rp.candidateList(currentLogin.getId());
+        candidateModel.addAttribute("candidateList",allCandidates);
         return "main";
     }
 
-    //Login
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
-
+    //dynamisk profilside til hver profil
     @GetMapping("/profile")
     public String profile(Model profileModel) {
         profileModel.addAttribute("profileList",allProfiles);
         return "profile";
     }
 
+    //finde profilens ID og derefter display deres side
     @PostMapping("/profileId")
     public String getProfile(WebRequest profileClick){
         String id = profileClick.getParameter("profileId");
@@ -181,6 +184,16 @@ public class DatingController {
         return "redirect:/profile";
     }
 
+    //Send message til profil fra currentlogin
+    @PostMapping("/sendmessage")
+    public String sendMessage(WebRequest receiverBtn, WebRequest messageInput) throws SQLException{
+        int receiverId = Integer.parseInt(receiverBtn.getParameter("getReceiverId"));
+        String msg = messageInput.getParameter("getMessage");
+        mp.sendMessage(currentLogin.getId(),receiverId,msg);
+        return "redirect:/profile";
+    }
+
+    //tilføj favort til current login
     @PostMapping("/addtokandidat")
     public String kandidatList(WebRequest kandidatButton) throws SQLException {
         String candidateId = kandidatButton.getParameter("addToKandidat");
@@ -190,37 +203,22 @@ public class DatingController {
         return "redirect:/profile";
     }
 
-    //Admin
-    @GetMapping("/admin")
-    public String admin() {
-        return "admin";
-    }
-
-    //Om os
+    //Om os side
     @GetMapping("/omos")
     public String omos() {
         return "omos";
     }
 
-    //Sugar Mommy
+    //Sugar Mommy side
     @GetMapping("/sugarmommy")
     public String sugarmommy() {
         return "sugarmommy";
     }
 
-    //Sugar Daddy
+    //Sugar Daddy side
     @GetMapping("/sugardaddy")
     public String sugardaddy() {
         return "sugardaddy";
-    }
-
-    //Send message
-    @PostMapping("/sendmessage")
-    public String sendMessage(WebRequest receiverBtn, WebRequest messageInput) throws SQLException{
-        int receiverId = Integer.parseInt(receiverBtn.getParameter("getReceiverId"));
-        String msg = messageInput.getParameter("getMessage");
-        mp.sendMessage(currentLogin.getId(),receiverId,msg);
-        return "redirect:/profile";
     }
 }
 

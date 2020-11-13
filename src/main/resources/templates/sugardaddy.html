@@ -5,18 +5,15 @@
     <div th:insert="fragments/header :: header"></div>
     <div th:insert="fragments/menu :: menu"></div>
 
-    <title>KEA Dating - Sugar Daddy</title>
+    <title>Sugar Daddy</title>
     <meta charset="UTF-8">
 </head>
 
 <body>
 
-<div th:insert="fragments/jumbotron :: jumbotron">
-</div>
+<div th:insert="fragments/jumbotron :: jumbotron"></div>
 
 <div class="container" id="main">
-
-    <!-- Indsæt indhold her -->
     <div class="row">
 
         <div class="col-md-6">
@@ -36,7 +33,9 @@
                 <br><br>
                 ♥︎ KEA Dating Teamet ♥︎
             </p>
+
             <br><br>
+
             <div id="form-container">
                 <form id="toMainPage" action="/" method="get">
                     <button class="btn btn-primary" type="submit"><-- Tilbage</button>
@@ -49,13 +48,13 @@
 
         <div class="col-md-6">
             <div class="simple-text"><h2>&ensp;</h2></div>
-            <p class="parag2" title=""><img src="images/members_photos/Member_08.jpg" width="74%" height="auto" alt="Zentai costume image">
-                <br><br></p>
+            <p class="parag2" title=""><img src="images/members_photos/Member_08.jpg" width="74%" height="auto" alt="Zentai costume image"></p>
         </div>
+
     </div>
-</div> <!-- /container -->
+</div>
 <br>
-<hr>
+
 </body>
 <div th:insert="fragments/footer :: footer"></div>
 </html>
